@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drew's | Jhon Andrew A. Gamboa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafafa; --fg: #0a0a0a; --dim: rgba(0,0,0,.14); --muted: #5c5c5c;
+    --card: rgba(0,0,0,.04);
+  }
+  [data-theme="dark"] {
+    --bg: #0a0a0a; --fg: #f5f5f5; --dim: rgba(255,255,255,.14); --muted: #a0a0a0;
+    --card: rgba(255,255,255,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif; background: var(--bg); color: var(--fg);
+    min-height: 100vh; transition: background .3s, color .3s;
+  }
+
+    #bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    main { position: relative; z-index: 1; }
+
+  /* NAVBAR */
+  nav {
+    position: sticky; top: 0; z-index: 10; height: 64px; padding: 0 clamp(20px, 5vw, 64px);
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--dim); background: transparent;
+  }
+  .brand { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -.5px; }
+  .brand span { opacity: .45; }
+  #toggle {
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--dim);
+    background: transparent; color: var(--fg); cursor: pointer; display: grid; place-items: center;
+    transition: transform .4s, border-color .2s;
+  }
+  #toggle:hover { border-color: var(--fg); transform: rotate(25deg); }
+  #toggle svg { width: 18px; height: 18px; }
+  .sun { display: none; }
+  [data-theme="dark"] .sun { display: block; }
+  [data-theme="dark"] .moon { display: none; }
+
+  /* LAYOUT */
+  main {
+  max-width: 1400px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px);
+  display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: clamp(16px, 3vw, 48px);
+  align-items: center; height: calc(100dvh - 64px);
+}
+
+  /* LEFT */
+  .intro .tag { color: var(--muted); font-size: .85rem; letter-spacing: .15em; text-transform: uppercase; margin-bottom: 16px; }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.4rem, 4.2vw, 4rem);
+    line-height: 1; letter-spacing: -2px; margin-bottom: 24px;
+  }
+  .intro p { color: var(--muted); line-height: 1.7; max-width: 42ch; margin-bottom: 28px; }
+  .links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .links a {
+    color: var(--fg); text-decoration: none; font-size: .9rem; padding: 10px 18px;
+    border: 1px solid var(--dim); border-radius: 999px; transition: .2s;
+  }
+  .links a:hover { background: var(--fg); color: var(--bg); }
+
+  /* MIDDLE: SPIRAL */
+  .skills { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .stage { position: relative; width: 100%; max-width: min(440px, 48vh); aspect-ratio: 1; }
+  .spin, .spin svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .spin path { fill: none; stroke: var(--dim); stroke-width: 1.5; stroke-linecap: round; }
+  .node {
+  position: absolute; width: 28%; aspect-ratio: 1; border-radius: 50%;
+  border: 1px solid var(--dim); background: var(--bg); color: var(--fg);
+  font: 500 .8rem 'Inter', sans-serif; text-align: center; line-height: 1.25; cursor: pointer;
+  display: grid; place-items: center; padding: 8px;
+  transform: translate(-50%, -50%);
+  transition: background .25s, color .25s, border-color .25s;
+}
+  .node:hover, .node.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+  .detail {
+    width: 100%; max-width: 440px; min-height: 150px; padding: 20px 22px;
+    border: 1px solid var(--dim); border-radius: 16px; background: var(--card);
+  }
+  .detail h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips span { font-size: .8rem; padding: 6px 12px; border: 1px solid var(--dim); border-radius: 999px; color: var(--muted); }
+
+  /* RIGHT: PHOTO */
+  .photo { display: flex; justify-content: center; }
+  .photo img {
+  width: 100%; max-width: 380px; max-height: 72vh; object-fit: contain; display: block;
+  -webkit-mask-image: radial-gradient(ellipse 62% 66% at 50% 42%, #000 55%, transparent 100%);
+          mask-image: radial-gradient(ellipse 62% 66% at 50% 42%, #000 55%, transparent 100%);
+}
+  [data-theme="light"] .photo img { mix-blend-mode: multiply; }
+  [data-theme="dark"] .photo img { filter: brightness(.85) contrast(1.05); }
+
+@media (min-width: 961px) {
+  html, body { overflow: hidden; }
+}
+
+  @media (max-width: 960px) {
+    main { grid-template-columns: 1fr; text-align: center; }
+    .intro p { margin-inline: auto; }
+    .links { justify-content: center; }
+    .photo { order: -1; }
+    .photo img { max-width: 260px; }
+    .detail { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) { .spin, .node { animation: none; } }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<nav>
+  <div class="brand">Drew<span>'s</span></div>
+  <button id="toggle" aria-label="Toggle dark/light mode">
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+</nav>
+
+<main>
+  <section class="intro">
+    <div class="tag">Computer Engineer · Development &amp; Networking</div>
+    <h1>Jhon Andrew A. Gamboa</h1>
+    <p>
+      Fresh Computer Engineering graduate from Mindoro State University, building toward a career
+      in networking and web development. I enjoy turning ideas into working
+      systems, from embedded projects to web apps, and I'm a fast learner who loves a new technical challenge.
+    </p>
+    <div class="links">
+      <a href="mailto:andrewsandrew0811@gmail.com">Email me</a>
+      <a href="https://github.com/andrewsandrew0811-maker" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/jhon-andrew-gamboa-083791419" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </section>
+
+  <section class="skills">
+    <div class="stage" id="stage">
+      <div class="spin"><svg viewBox="-230 -230 460 460"><path id="spiral"/></svg></div>
+    </div>
+    <div class="detail" id="detail"></div>
+  </section>
+
+  <section class="photo">
+    <img src="Profile3.jpg" alt="Portrait of Jhon Andrew Gamboa">
+  </section>
+</main>
+
+<script>
+  // ---------- Theme ----------
+  const root = document.documentElement;
+  const saved = localStorage.getItem('theme');
+  root.dataset.theme = saved || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  document.getElementById('toggle').onclick = () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', root.dataset.theme);
+  };
+
+  // ---------- Skills ----------
+  const skills = [
+    { label: 'Networking', title: 'Networking',
+      items: ['TCP/IP', 'IP Addressing & Subnetting', 'DNS & DHCP', 'HTTP/S', 'FTP', 'VLAN'] },
+    { label: 'Software Development', title: 'Software Development',
+      items: ['C++', 'C#', 'HTML', 'CSS', 'Tailwind CSS', 'JavaScript', 'ReactJS', 'NodeJS', 'Python', 'MySQL'] },
+    { label: 'Tools', title: 'Tools',
+      items: ['Word', 'Excel', 'Git/GitHub', 'Vercel', 'Supabase', 'EmailJS', 'Windows OS', 'Active Directory'] }
+  ];
+
+  const stage = document.getElementById('stage');
+  const spin = stage.querySelector('.spin');
+  const detail = document.getElementById('detail');
+  const SIZE = 460, TURNS = 2, MAX = TURNS * 2 * Math.PI;
+  const radius = t => 30 + 145 * (t / MAX);
+
+  // draw spiral
+  let d = '';
+  for (let t = 0; t <= MAX; t += 0.05) {
+    d += (t ? 'L' : 'M') + (radius(t) * Math.cos(t)).toFixed(1) + ' ' + (radius(t) * Math.sin(t)).toFixed(1);
+  }
+  document.getElementById('spiral').setAttribute('d', d);
+
+  function show(i) {
+    detail.innerHTML = `<h3>${skills[i].title}</h3><div class="chips">${skills[i].items.map(x => `<span>${x}</span>`).join('')}</div>`;
+    stage.querySelectorAll('.node').forEach((n, j) => n.classList.toggle('active', i === j));
+  }
+
+  // place nodes along the spiral
+  [0.9 * Math.PI, 2.3 * Math.PI, 3.7 * Math.PI].forEach((t, i) => {
+    const n = document.createElement('button');
+    n.className = 'node';
+    n.textContent = skills[i].label;
+    n.style.left = (50 + (radius(t) * Math.cos(t)) / SIZE * 100) + '%';
+    n.style.top  = (50 + (radius(t) * Math.sin(t)) / SIZE * 100) + '%';
+    n.onmouseenter = n.onfocus = n.onclick = () => show(i);
+    spin.appendChild(n);
+  });
+
+// ---------- Spiral motion (slows on hover instead of stopping) ----------
+const nodes = [...stage.querySelectorAll('.node')];
+const FULL = 8, SLOW = 2;           // degrees per second
+let angle = 0, speed = FULL, target = FULL, last = performance.now();
+
+nodes.forEach(n => {
+  n.addEventListener('mouseenter', () => target = SLOW);
+  n.addEventListener('mouseleave', () => target = FULL);
+  n.addEventListener('focus', () => target = SLOW);
+  n.addEventListener('blur', () => target = FULL);
+});
+
+function tick(now) {
+  const dt = (now - last) / 1000; last = now;
+  speed += (target - speed) * Math.min(1, dt * 5);   // smooth ease between speeds
+  angle = (angle + speed * dt) % 360;
+  spin.style.transform = `rotate(${-angle}deg)`;
+  nodes.forEach(n => n.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`);
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+  // ---------- Make the detail box the same size for every skill ----------
+function sizeDetail() {
+  detail.style.minHeight = '0';
+  let max = 0;
+  skills.forEach((_, i) => { show(i); max = Math.max(max, detail.offsetHeight); });
+  detail.style.minHeight = max + 'px';
+  show(0);
+}
+sizeDetail();
+addEventListener('resize', sizeDetail);
+// ---------- Background strands ----------
+const cv = document.getElementById('bg');
+const cx = cv.getContext('2d');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W, H;
+
+function fit() {
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * dpr; cv.height = H * dpr;
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+fit();
+addEventListener('resize', fit);
+
+const BUNDLES = 3, STRANDS = 10;
+
+function drawStrands(t) {
+  const dark = root.dataset.theme === 'dark';
+  cx.clearRect(0, 0, W, H);
+  cx.lineWidth = 1;
+  cx.shadowBlur = dark ? 8 : 0;
+  cx.shadowColor = 'rgba(255,255,255,.7)';
+
+  for (let b = 0; b < BUNDLES; b++) {
+    const baseY = H * (0.3 + b * 0.25);
+    const amp = H * (0.09 + b * 0.03);
+    for (let s = 0; s < STRANDS; s++) {
+      const k = s / STRANDS;
+      cx.beginPath();
+      for (let x = -20; x <= W + 20; x += 16) {
+        const p = (x / W) * Math.PI * 2;
+        const y = baseY
+          + Math.sin(p * (0.9 + b * 0.25) + t * 0.0004 * (1 + b * 0.3) + b * 2) * amp
+          + Math.sin(p * 1.7 - t * 0.0003 + k * 1.6) * amp * 0.35
+          + (k - 0.5) * amp * 0.9 * Math.sin(p * 0.8 + t * 0.0002 + b);
+        x === -20 ? cx.moveTo(x, y) : cx.lineTo(x, y);
+      }
+      const a = 0.06 + 0.3 * Math.sin(k * Math.PI);
+      cx.strokeStyle = dark ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a * 0.6})`;
+      cx.stroke();
+    }
+  }
+  if (!reduce) requestAnimationFrame(drawStrands);
+}
+requestAnimationFrame(drawStrands);
+</script>
+</body>
+</html>
